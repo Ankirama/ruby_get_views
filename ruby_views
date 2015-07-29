@@ -1,0 +1,65 @@
+#!/usr/bin/env ruby
+
+require 'json'
+
+# usage displayed if any error
+def usage()
+  puts "Usage: ./ruby_views JSON_file"
+  exit
+end
+
+# return a data hash from JSON file in parameter (require json module)
+def getFileContent(file_path)
+  file = File.read(file_path)
+  data_hash = JSON.parse(file)
+  return data_hash
+  data_hash.each do |var|
+    puts var['views_count']
+  end
+end
+
+# main function to find biggest topic_id in our json hash
+# we will travel in our data hash and for each video we will add information for each topic
+# we will check the biggest views topic and return result from views * likes * dislikes
+def calcTopicId(data_hash)
+  topic_ids = Hash.new
+  maxViews = 0
+  id = ""
+
+  data_hash.each do |video|
+    if (video.has_key?('topic_ids') == true)
+      video['topic_ids'].each do |id|
+        if (topic_ids.has_key?(id) == true)
+          topic_ids[id]['views'] += video['views_count']
+          topic_ids[id]['likes'] += video['likes_count']
+          topic_ids[id]['dislikes'] += video['dislikes_count']
+        else
+          topic_ids[id] = {'views' => video['views_count'],
+            'likes' => video['likes_count'],
+            'dislikes' => video['dislikes_count']}
+        end
+      end
+    end
+  end
+  topic_ids.each do |topic|
+    if (topic[1]['views'] > maxViews)
+      maxViews = topic[1]['views']
+      id = topic[0]
+    end
+  end
+  return (topic_ids[id]['views'] * topic_ids[id]['likes'] * topic_ids[id]['dislikes'])
+end
+
+# It will check if we precise a JSON file and execute calcTopicId
+def main()
+  if (ARGV.length != 1)
+    usage()
+  end
+  if (File.file?(ARGV[0]) == false)
+    puts "Error: [%s] doesn't exist or isn't a file." % [ARGV[0]]
+    usage()
+  end
+  puts (calcTopicId(getFileContent(ARGV[0])))
+end
+
+main()
