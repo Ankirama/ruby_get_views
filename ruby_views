@@ -21,7 +21,7 @@ end
 def calcTopicId(data_hash)
   topic_ids = Hash.new
   maxViews = 0
-  id = ""
+  my_id = ""
 
   data_hash.each do |video|
     if (video.has_key?('topic_ids') == true)
@@ -41,10 +41,10 @@ def calcTopicId(data_hash)
   topic_ids.each do |topic|
     if (topic[1]['views'] > maxViews)
       maxViews = topic[1]['views']
-      id = topic[0]
+      my_id = topic[0]
     end
   end
-  return (topic_ids[id]['views'] * topic_ids[id]['likes'] * topic_ids[id]['dislikes'])
+  return (topic_ids[my_id]['views'] * topic_ids[my_id]['likes'] * topic_ids[my_id]['dislikes'])
 end
 
 # It will check if we precise a JSON file and execute calcTopicId
