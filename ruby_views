@@ -13,9 +13,6 @@ def getFileContent(file_path)
   file = File.read(file_path)
   data_hash = JSON.parse(file)
   return data_hash
-  data_hash.each do |var|
-    puts var['views_count']
-  end
 end
 
 # main function to find biggest topic_id in our json hash
